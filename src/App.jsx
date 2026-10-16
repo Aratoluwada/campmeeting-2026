@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import Cropper from 'react-easy-crop';
+import { Analytics } from '@vercel/analytics/react';
 import { ArrowRight, ArrowUpRight, Calendar, Camera, Check, Clock, Download, ImagePlus, LoaderCircle, MapPin, Menu, MessageCircle, Plus, RotateCcw, Share2, Upload, X } from 'lucide-react';
 import './App.css';
 
@@ -269,6 +270,7 @@ function App() {
 
   return (
     <>
+      <Analytics />
       <a className="skip-link" href="#create">Skip to the card creator</a>
 
       <header className="navbar">
