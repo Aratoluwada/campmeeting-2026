@@ -87,7 +87,7 @@ async function renderDesign(photoUrl, firstName) {
 
 function attendanceMessage(name) {
   const greeting = name?.trim() ? `${name.trim()} is attending` : 'I am attending';
-  return `🙌 ${greeting} Homecoming & Campmeeting 2026 at City Harvest Church International!\n\nOur theme is “The Wonderful God”. Join us from October 21–25, 2026, at Transformation Center, Abeokuta.\n\nMorning sessions: 6AM | Evening sessions: 5PM\n\nCome and experience God's goodness with us!\n#HomecomingAndCampmeeting2026 #TheWonderfulGod`;
+  return `${greeting} Homecoming & Campmeeting 2026 at City Harvest Church International 🙌!\n\nOur theme is “The Wonderful God”. Join us from October 21–25, 2026, at Transformation Center, Somorin, Abeokuta.\n\nMorning sessions: 6AM | Evening sessions: 5PM\n\nCome and experience God's goodness with us!\n#HomecomingAndCampmeeting2026 #TheWonderfulGod`;
 }
 
 function useCountdown(target) {
@@ -230,24 +230,34 @@ function App() {
     setTimeout(() => URL.revokeObjectURL(url), 1500);
   }
 
-  async function shareDesign() {
+  // Shares the design image, optionally together with the invite message.
+  async function shareDesign({ withMessage = false } = {}) {
     if (!designBlob) return;
-    const file = new File([designBlob], `homecoming-2026-${firstName.trim() || 'attendance'}.png`, { type: 'image/png' });
-    const shareData = { files: [file], title: 'Homecoming & Campmeeting 2026', text: attendanceMessage(firstName) };
+    setError('');
+    const message = attendanceMessage(firstName);
+    const file = new File([designBlob], `homecoming-2026-${firstName.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-') || 'attendance'}.png`, { type: 'image/png' });
+    const shareData = { files: [file], title: 'Homecoming & Campmeeting 2026' };
+    if (withMessage) shareData.text = message;
+
+    // Some apps drop the text when an image is attached, so keep a copy on the clipboard as a backup.
+    if (withMessage) { try { await navigator.clipboard?.writeText(message); } catch { /* clipboard unavailable */ } }
+
     try {
-      if (navigator.canShare?.({ files: [file] }) && navigator.share) await navigator.share(shareData);
-      else {
-        await downloadDesign();
+      if (navigator.canShare?.({ files: [file] }) && navigator.share) {
+        await navigator.share(shareData);
+        return;
+      }
+      // Browsers without file sharing (most desktops): save the image, and open WhatsApp with the text.
+      await downloadDesign();
+      if (withMessage) {
+        window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank', 'noopener,noreferrer');
+        setSuccess('Image downloaded. Attach it to the WhatsApp chat that just opened. The message is already filled in.');
+      } else {
         setSuccess('Image downloaded. Attach it to your post or message to share it.');
       }
     } catch (err) {
       if (err?.name !== 'AbortError') setError('Sharing was not available. Download the image and share it from your gallery.');
     }
-  }
-
-  function shareWhatsApp() {
-    const message = attendanceMessage(firstName);
-    window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank', 'noopener,noreferrer');
   }
 
   function startAgain() {
@@ -373,8 +383,8 @@ function App() {
           {designUrl && <div className="result-panel">
             <div className="result-heading"><span className="result-check"><Check size={20} /></span><div><h3>Your design is ready!</h3><p>It’s time to spread the word and invite someone along.</p></div></div>
             <img className="final-design" src={designUrl} alt="Your completed Homecoming and Campmeeting attendance design" />
-            <div className="result-actions"><button className="btn btn-primary" onClick={downloadDesign}><Download size={18} /> Download PNG</button><button className="btn btn-dark" onClick={shareDesign}><Share2 size={18} /> Share design</button><button className="btn btn-green" onClick={shareWhatsApp}><MessageCircle size={18} /> Share message</button></div>
-            <p className="share-hint">“I’m attending Homecoming &amp; Campmeeting 2026! Join me as we encounter The Wonderful God. 🙌”</p>
+            <div className="result-actions"><button className="btn btn-primary" onClick={downloadDesign}><Download size={18} /> Download PNG</button><button className="btn btn-dark" onClick={() => shareDesign()}><Share2 size={18} /> Share design</button><button className="btn btn-green" onClick={() => shareDesign({ withMessage: true })}><MessageCircle size={18} /> Share message</button></div>
+            <p className="share-hint"><strong>Share message</strong> sends your design together with the invite text. <strong>Share design</strong> sends just the image.</p>
             <button className="back-button" onClick={startAgain}>Create another design</button>
           </div>}
         </section>
