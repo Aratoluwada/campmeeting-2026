@@ -245,9 +245,19 @@ function App() {
     }
   }
 
-  // Shares the invite message as text only.
-  function shareWhatsApp() {
+  // Shares the invite message as text only, through the device share sheet so any app can be chosen.
+  async function shareMessage() {
+    setError('');
     const message = attendanceMessage(firstName);
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: 'Homecoming & Campmeeting 2026', text: message });
+        return;
+      }
+    } catch (err) {
+      if (err?.name === 'AbortError') return;
+    }
+    // Browsers without a share sheet (most desktops): fall back to WhatsApp.
     window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank', 'noopener,noreferrer');
   }
 
@@ -374,7 +384,7 @@ function App() {
           {designUrl && <div className="result-panel">
             <div className="result-heading"><span className="result-check"><Check size={20} /></span><div><h3>Your design is ready!</h3><p>It’s time to spread the word and invite someone along.</p></div></div>
             <img className="final-design" src={designUrl} alt="Your completed Homecoming and Campmeeting attendance design" />
-            <div className="result-actions"><button className="btn btn-primary" onClick={downloadDesign}><Download size={18} /> Download PNG</button><button className="btn btn-dark" onClick={shareDesign}><Share2 size={18} /> Share design</button><button className="btn btn-green" onClick={shareWhatsApp}><MessageCircle size={18} /> Share message</button></div>
+            <div className="result-actions"><button className="btn btn-primary" onClick={downloadDesign}><Download size={18} /> Download PNG</button><button className="btn btn-dark" onClick={shareDesign}><Share2 size={18} /> Share design</button><button className="btn btn-green" onClick={shareMessage}><MessageCircle size={18} /> Share message</button></div>
             <p className="share-hint"><strong>Share design</strong> sends your image. <strong>Share message</strong> sends the invite text. Share both so your friends see the design and the details.</p>
             <button className="back-button" onClick={startAgain}>Create another design</button>
           </div>}
