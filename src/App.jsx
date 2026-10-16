@@ -87,7 +87,8 @@ async function renderDesign(photoUrl, firstName) {
 
 function attendanceMessage(name) {
   const greeting = name?.trim() ? `${name.trim()} is attending` : 'I am attending';
-  return `${greeting} Homecoming & Campmeeting 2026 at City Harvest Church International 🙌!\n\nOur theme is “The Wonderful God”. Join us from October 21–25, 2026, at Transformation Center, Somorin, Abeokuta.\n\nMorning sessions: 6AM | Evening sessions: 5PM\n\nCome and experience God's goodness with us!\n#HomecomingAndCampmeeting2026 #TheWonderfulGod`;
+  const siteUrl = typeof window !== 'undefined' ? window.location.origin : '';
+  return `${greeting} Homecoming & Campmeeting 2026 at City Harvest Church International 🙌!\n\nOur theme is “The Wonderful God”. Join us from October 21–25, 2026, at Transformation Center, Somorin, Abeokuta.\n\nMorning sessions: 6AM | Evening sessions: 5PM\n\nCome and experience God's goodness with us!\n\nYou can generate yours here: ${siteUrl}\n\n#HomecomingAndCampmeeting2026 #TheWonderfulGod`;
 }
 
 function useCountdown(target) {
