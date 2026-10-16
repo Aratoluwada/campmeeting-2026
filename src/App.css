@@ -181,6 +181,9 @@ main { overflow-x: clip; }
 .footer-brand img { height: 44px; width: auto; }
 .footer strong { color: var(--navy); }
 .footer-tag { font-weight: 700; letter-spacing: .08em; font-size: 11px; color: var(--navy); }
+.footer-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
+.footer-dev { display: inline-flex; align-items: center; gap: 4px; color: var(--navy); font-weight: 700; font-size: 13px; text-decoration: underline; text-underline-offset: 3px; }
+.footer-dev:hover { color: var(--green); }
 
 /* ---------- Crop modal ---------- */
 .modal-backdrop { position: fixed; z-index: 90; inset: 0; background: rgba(17, 22, 48, .78); backdrop-filter: blur(6px); display: grid; place-items: center; padding: 18px; }
@@ -233,6 +236,7 @@ main { overflow-x: clip; }
   .result-actions { display: grid; grid-template-columns: 1fr; }
   .result-actions .btn { width: 100%; }
   .footer-inner { flex-direction: column; align-items: flex-start; }
+  .footer-meta { align-items: flex-start; }
   .closing::before { top: 8px; left: 4%; font-size: 52px; }
   .closing::after { bottom: 4px; right: 4%; font-size: 52px; }
   .crop-modal { padding: 18px; }
