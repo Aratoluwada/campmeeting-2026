@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import Cropper from 'react-easy-crop';
-import { ArrowRight, Calendar, Camera, Check, Clock, Download, ImagePlus, LoaderCircle, MapPin, Menu, MessageCircle, Plus, RotateCcw, Share2, Upload, X } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, Calendar, Camera, Check, Clock, Download, ImagePlus, LoaderCircle, MapPin, Menu, MessageCircle, Plus, RotateCcw, Share2, Upload, X } from 'lucide-react';
 import './App.css';
 
 const TEMPLATE_URL = '/assets/attendance-template.svg';
@@ -417,7 +417,10 @@ function App() {
       <footer className="footer">
         <div className="footer-inner">
           <div className="footer-brand"><img src={LOGO_URL} alt="" width="34" height="56" /><span>Made by the media team of <strong>City Harvest Church International</strong></span></div>
-          <span className="footer-tag">HOMECOMING &amp; CAMPMEETING 2026 · OCT 21–25</span>
+          <div className="footer-meta">
+            <span className="footer-tag">HOMECOMING &amp; CAMPMEETING 2026 · OCT 21–25</span>
+            <a className="footer-dev" href="https://aratoluwada.cv" target="_blank" rel="noopener noreferrer">Contact the developer <ArrowUpRight size={14} aria-hidden="true" /></a>
+          </div>
         </div>
       </footer>
 
