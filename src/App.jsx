@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import Cropper from 'react-easy-crop';
-import { ArrowRight, Calendar, Camera, Check, Clock, Download, ImagePlus, LoaderCircle, MapPin, Menu, MessageCircle, Plus, RotateCcw, Share2, Sparkles, Upload, X } from 'lucide-react';
+import { ArrowRight, Calendar, Camera, Check, Clock, Download, ImagePlus, LoaderCircle, MapPin, Menu, MessageCircle, Plus, RotateCcw, Share2, Upload, X } from 'lucide-react';
 import './App.css';
 
 const TEMPLATE_URL = '/assets/attendance-template.svg';
@@ -279,7 +279,7 @@ function App() {
       <main id="top">
         <section className="hero">
           <div className="hero-copy">
-            <span className="chip"><Sparkles size={14} /> Oct 21–25, 2026 · Abeokuta</span>
+            <span className="chip">Oct 21–25, 2026 · Abeokuta</span>
             <h1>Homecoming <span className="amp">&amp;</span> Campmeeting <span className="year">2026.</span></h1>
             <p className="hero-sub">Our theme this year is <strong>The Wonderful God</strong>. Make your personalized “I will be attending” card, share it, and invite someone to come with you.</p>
             <div className="hero-actions">
@@ -405,7 +405,7 @@ function App() {
 
       <footer className="footer">
         <div className="footer-inner">
-          <div className="footer-brand"><img src={LOGO_URL} alt="" width="34" height="56" /><span>Made with love for <strong>City Harvest Church International</strong></span></div>
+          <div className="footer-brand"><img src={LOGO_URL} alt="" width="34" height="56" /><span>Made by the media team of <strong>City Harvest Church International</strong></span></div>
           <span className="footer-tag">HOMECOMING &amp; CAMPMEETING 2026 · OCT 21–25</span>
         </div>
       </footer>
