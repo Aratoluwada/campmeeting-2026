@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import Cropper from 'react-easy-crop';
-import { ArrowRight, Calendar, Camera, Check, Clock, Copy, Download, ImagePlus, LoaderCircle, MapPin, Menu, MessageCircle, Plus, RotateCcw, Share2, Upload, X } from 'lucide-react';
+import { ArrowRight, Calendar, Camera, Check, Clock, Download, ImagePlus, LoaderCircle, MapPin, Menu, MessageCircle, Plus, RotateCcw, Share2, Upload, X } from 'lucide-react';
 import './App.css';
 
 const TEMPLATE_URL = '/assets/attendance-template.svg';
@@ -145,8 +145,6 @@ function App() {
   const [designBlob, setDesignBlob] = useState(null);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-  const [copied, setCopied] = useState(false);
-
   const photoPreview = croppedPhoto || '';
   const designUrl = useMemo(() => designBlob ? URL.createObjectURL(designBlob) : '', [designBlob]);
 
@@ -231,32 +229,15 @@ function App() {
     setTimeout(() => URL.revokeObjectURL(url), 1500);
   }
 
-  // Shares the design image, optionally together with the invite message.
-  async function shareDesign({ withMessage = false } = {}) {
+  // Shares the design image on its own.
+  async function shareDesign() {
     if (!designBlob) return;
     setError('');
-    const message = attendanceMessage(firstName);
     const file = new File([designBlob], `homecoming-2026-${firstName.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-') || 'attendance'}.png`, { type: 'image/png' });
-    const shareData = { files: [file], title: 'Homecoming & Campmeeting 2026' };
-    if (withMessage) shareData.text = message;
-
-    // Apps like WhatsApp often drop the text when an image is attached, so copy it as a backup.
-    // Started without awaiting so the share sheet still opens within the tap.
-    let copying = Promise.resolve(false);
-    if (withMessage && navigator.clipboard?.writeText) copying = navigator.clipboard.writeText(message).then(() => true, () => false);
-
     try {
-      if (navigator.canShare?.({ files: [file] }) && navigator.share) {
-        await navigator.share(shareData);
-        if (withMessage && await copying) setSuccess('Shared. If the message didn’t come through, it’s copied. Paste it as the caption.');
-        return;
-      }
-      // Browsers without file sharing (most desktops): save the image, and open WhatsApp with the text.
-      await downloadDesign();
-      if (withMessage) {
-        window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank', 'noopener,noreferrer');
-        setSuccess('Image downloaded. Attach it to the WhatsApp chat that just opened. The message is already filled in.');
-      } else {
+      if (navigator.canShare?.({ files: [file] }) && navigator.share) await navigator.share({ files: [file], title: 'Homecoming & Campmeeting 2026' });
+      else {
+        await downloadDesign();
         setSuccess('Image downloaded. Attach it to your post or message to share it.');
       }
     } catch (err) {
@@ -264,14 +245,10 @@ function App() {
     }
   }
 
-  async function copyMessage() {
-    try {
-      await navigator.clipboard.writeText(attendanceMessage(firstName));
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2500);
-    } catch {
-      setError('Could not copy automatically. Press and hold the message to copy it.');
-    }
+  // Shares the invite message as text only.
+  function shareWhatsApp() {
+    const message = attendanceMessage(firstName);
+    window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank', 'noopener,noreferrer');
   }
 
   function startAgain() {
@@ -397,12 +374,8 @@ function App() {
           {designUrl && <div className="result-panel">
             <div className="result-heading"><span className="result-check"><Check size={20} /></span><div><h3>Your design is ready!</h3><p>It’s time to spread the word and invite someone along.</p></div></div>
             <img className="final-design" src={designUrl} alt="Your completed Homecoming and Campmeeting attendance design" />
-            <div className="result-actions"><button className="btn btn-primary" onClick={downloadDesign}><Download size={18} /> Download PNG</button><button className="btn btn-dark" onClick={() => shareDesign()}><Share2 size={18} /> Share design</button><button className="btn btn-green" onClick={() => shareDesign({ withMessage: true })}><MessageCircle size={18} /> Share message</button></div>
-            <div className="message-box">
-              <div className="message-box-head"><strong>Your invite message</strong><button type="button" className="text-button copy-button" onClick={copyMessage}>{copied ? <><Check size={15} /> Copied</> : <><Copy size={15} /> Copy message</>}</button></div>
-              <p>{attendanceMessage(firstName)}</p>
-            </div>
-            <p className="share-hint"><strong>Share message</strong> sends your design with this text. Some apps, WhatsApp included, drop the text when an image is attached. The message is copied automatically, so just paste it as the caption. Or tap <strong>Copy message</strong> above.</p>
+            <div className="result-actions"><button className="btn btn-primary" onClick={downloadDesign}><Download size={18} /> Download PNG</button><button className="btn btn-dark" onClick={shareDesign}><Share2 size={18} /> Share design</button><button className="btn btn-green" onClick={shareWhatsApp}><MessageCircle size={18} /> Share message</button></div>
+            <p className="share-hint"><strong>Share design</strong> sends your image. <strong>Share message</strong> sends the invite text. Share both so your friends see the design and the details.</p>
             <button className="back-button" onClick={startAgain}>Create another design</button>
           </div>}
         </section>
