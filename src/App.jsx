@@ -10,8 +10,8 @@ const OUTPUT_WIDTH = 1080;
 const OUTPUT_HEIGHT = 1397;
 const PHOTO_FRAME = { x: 350, y: 540, width: 380, height: 360 };
 const NAME_FRAME = { x: 275, y: 915, width: 537, height: 77 };
-// Day 1, morning session: 6 AM West Africa Time (UTC+1)
-const EVENT_START = new Date('2026-10-21T06:00:00+01:00').getTime();
+// Day 1, evening session: 5 PM West Africa Time (UTC+1)
+const EVENT_START = new Date('2026-10-21T17:00:00+01:00').getTime();
 // The count-up stops at the end of the last day (Oct 25), West Africa Time.
 const EVENT_END = new Date('2026-10-26T00:00:00+01:00').getTime();
 
