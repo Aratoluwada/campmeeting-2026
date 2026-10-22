@@ -12,6 +12,8 @@ const PHOTO_FRAME = { x: 350, y: 540, width: 380, height: 360 };
 const NAME_FRAME = { x: 275, y: 915, width: 537, height: 77 };
 // Day 1, morning session: 6 AM West Africa Time (UTC+1)
 const EVENT_START = new Date('2026-10-21T06:00:00+01:00').getTime();
+// The count-up stops at the end of the last day (Oct 25), West Africa Time.
+const EVENT_END = new Date('2026-10-26T00:00:00+01:00').getTime();
 
 const NAV_LINKS = [
   { href: '#details', label: 'Details' },
@@ -92,35 +94,45 @@ function attendanceMessage(name) {
   return `${greeting} Homecoming & Campmeeting 2026 at City Harvest Church International 🙌!\n\nOur theme is “The Wonderful God”. Join us from October 21–25, 2026, at Transformation Center, Somorin, Abeokuta.\n\nMorning sessions: 6AM | Evening sessions: 5PM\n\nCome and experience God's goodness with us!\n\nYou can generate yours here: ${siteUrl}\n\n#HomecomingAndCampmeeting2026 #TheWonderfulGod`;
 }
 
-function useCountdown(target) {
+function useNow() {
   const [now, setNow] = useState(() => Date.now());
   useEffect(() => {
     const id = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(id);
   }, []);
-  const diff = Math.max(0, target - now);
-  return {
-    live: now >= target,
-    days: Math.floor(diff / 86400000),
-    hours: Math.floor(diff / 3600000) % 24,
-    minutes: Math.floor(diff / 60000) % 60,
-    seconds: Math.floor(diff / 1000) % 60,
-  };
+  return now;
 }
 
-function Countdown() {
-  const { live, days, hours, minutes, seconds } = useCountdown(EVENT_START);
-  if (live) return <div className="countdown-live"><span className="live-dot" /> Homecoming &amp; Campmeeting 2026 is happening now.</div>;
-  const units = [['Days', days], ['Hours', hours], ['Minutes', minutes], ['Seconds', seconds]];
+// Counts up from the start of Campmeeting until it ends.
+function CountUp() {
+  const now = useNow();
+  const ended = now >= EVENT_END;
+  const diff = Math.max(0, now - EVENT_START);
+  const units = [
+    ['Days', Math.floor(diff / 86400000)],
+    ['Hours', Math.floor(diff / 3600000) % 24],
+    ['Minutes', Math.floor(diff / 60000) % 60],
+    ['Seconds', Math.floor(diff / 1000) % 60],
+  ];
   return (
-    <div className="countdown" role="timer" aria-label="Time until Homecoming and Campmeeting 2026 begins">
-      {units.map(([label, value]) => (
-        <div className="count-box" key={label}>
-          <strong>{String(value).padStart(2, '0')}</strong>
-          <span>{label}</span>
+    <>
+      <div className="section-head center">
+        <span className="eyebrow">{ended ? 'Thank you' : 'Happening now'}</span>
+        <h2 id="countdown-title">{ended ? 'Until next time.' : 'Time into Campmeeting.'}</h2>
+      </div>
+      {ended ? (
+        <div className="countdown-live">Homecoming &amp; Campmeeting 2026 has ended. Thank you for being part of it.</div>
+      ) : (
+        <div className="countdown" role="timer" aria-label="Time since Homecoming and Campmeeting 2026 began">
+          {units.map(([label, value]) => (
+            <div className="count-box" key={label}>
+              <strong>{String(value).padStart(2, '0')}</strong>
+              <span>{label}</span>
+            </div>
+          ))}
         </div>
-      ))}
-    </div>
+      )}
+    </>
   );
 }
 
@@ -318,11 +330,7 @@ function App() {
         <Ticker />
 
         <section className="countdown-section" aria-labelledby="countdown-title">
-          <div className="section-head center">
-            <span className="eyebrow">Counting down</span>
-            <h2 id="countdown-title">Until we gather.</h2>
-          </div>
-          <Countdown />
+          <CountUp />
         </section>
 
         <section className="details" id="details" aria-labelledby="details-title">
